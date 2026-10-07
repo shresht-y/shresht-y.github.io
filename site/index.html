@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <meta name="description" content="Projects, live engineering progress and contact details.">
+  <link rel="stylesheet" href="assets/style.css">
+  <script type="module" src="assets/app.js"></script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="Main">
+      <a class="brand" href="./" data-bind="name">Portfolio</a>
+      <ul>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#activity">Activity</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="hero-name">
+      <p class="eyebrow" data-bind="role"></p>
+      <h1 id="hero-name" data-bind="name"></h1>
+      <p class="lede" data-bind="bio"></p>
+      <p class="muted" data-bind="availability"></p>
+      <ul class="links" data-slot="links"></ul>
+    </section>
+
+    <section id="projects" aria-labelledby="projects-title">
+      <div class="section-head">
+        <h2 id="projects-title">Projects</h2>
+        <p class="muted small" data-slot="updated"></p>
+      </div>
+      <div class="cards" data-slot="projects"></div>
+    </section>
+
+    <section id="activity" aria-labelledby="activity-title">
+      <h2 id="activity-title">Recent activity</h2>
+      <p class="muted">Latest commits across all projects, pulled automatically from the repositories.</p>
+      <ol class="feed" data-slot="feed"></ol>
+    </section>
+
+    <section id="skills" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skills</h2>
+      <div class="skills" data-slot="skills"></div>
+    </section>
+
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contact</h2>
+      <p class="muted" data-bind="codeAccessNote"></p>
+      <ul class="links" data-slot="contact"></ul>
+    </section>
+  </main>
+
+  <footer class="wrap footer muted small" data-slot="footer"></footer>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Optional: copy to .github/workflows/notify-portfolio.yml in a project repository
+# (NetKnight, PAIOS, PAIOS-Front-End) so every push rebuilds the portfolio within about a minute.
+# Needs a repository secret PORTFOLIO_DISPATCH_TOKEN: a fine-grained token scoped to ONLY the
+# shresht-y.github.io repository with "Contents: read and write" (required by repository_dispatch).
+# It sends no code or data — just the event name.
+name: Notify portfolio
+
+on:
+  push:
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Trigger portfolio rebuild
+        env:
+          TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/shresht-y/shresht-y.github.io/dispatches \
+            -d '{"event_type":"project-pushed"}'

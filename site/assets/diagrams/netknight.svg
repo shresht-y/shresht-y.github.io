@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" role="img" aria-labelledby="nk-title nk-desc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+  <title id="nk-title">NetKnight target architecture</title>
+  <desc id="nk-desc">Household traffic passes through a deterministic Rust data plane to the internet. Observations flow into an event store and world model. Sentinel and Oracle, unprivileged Python services, can only propose actions. The Rust policy engine, informed by consent, alone authorizes typed actions, which narrow adapters execute, verify and reverse on the data plane.</desc>
+  <defs>
+    <marker id="nk-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted, #6b6f76)"/>
+    </marker>
+    <style>
+      .box { fill: var(--surface, #fff); stroke: var(--border, #ccc); stroke-width: 1.5; }
+      .rust { fill: var(--accent-soft, #e6ecfb); stroke: var(--accent, #2e5bd8); }
+      .label { fill: var(--text, #1b1c1e); font-weight: 600; }
+      .sub { fill: var(--muted, #6b6f76); font-size: 11.5px; }
+      .flow { stroke: var(--muted, #6b6f76); stroke-width: 1.5; fill: none; marker-end: url(#nk-arrow); }
+      .zone { fill: none; stroke: var(--active, #9a5b00); stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .zone-label { fill: var(--active, #9a5b00); font-size: 11.5px; font-weight: 600; }
+      .edge { fill: var(--muted, #6b6f76); font-size: 11px; }
+    </style>
+  </defs>
+
+  <!-- Traffic path -->
+  <rect class="box" x="20" y="40" width="150" height="64" rx="8"/>
+  <text class="label" x="95" y="68" text-anchor="middle">Household devices</text>
+  <text class="sub" x="95" y="86" text-anchor="middle">IPv4 + IPv6</text>
+
+  <rect class="box rust" x="300" y="30" width="300" height="84" rx="8"/>
+  <text class="label" x="450" y="60" text-anchor="middle">Data plane (Rust)</text>
+  <text class="sub" x="450" y="80" text-anchor="middle">deterministic forwarding · firewall · DNS/DHCP</text>
+  <text class="sub" x="450" y="97" text-anchor="middle">keeps working if every AI component fails</text>
+
+  <rect class="box" x="730" y="40" width="150" height="64" rx="8"/>
+  <text class="label" x="805" y="68" text-anchor="middle">Internet</text>
+  <text class="sub" x="805" y="86" text-anchor="middle">upstream</text>
+
+  <path class="flow" d="M170 72 H296"/>
+  <path class="flow" d="M600 72 H726"/>
+
+  <!-- Observation -->
+  <rect class="box" x="20" y="190" width="170" height="70" rx="8"/>
+  <text class="label" x="105" y="218" text-anchor="middle">Events + World Model</text>
+  <text class="sub" x="105" y="237" text-anchor="middle">observations · beliefs</text>
+  <text class="sub" x="105" y="252" text-anchor="middle">consent-gated collection</text>
+  <path class="flow" d="M330 114 C330 160 150 150 120 186"/>
+  <text class="edge" x="248" y="138">observations</text>
+
+  <!-- Unprivileged intelligence -->
+  <rect class="zone" x="220" y="168" width="330" height="190" rx="12"/>
+  <text class="zone-label" x="236" y="188">Unprivileged Python · can only propose</text>
+  <rect class="box" x="240" y="200" width="130" height="64" rx="8"/>
+  <text class="label" x="305" y="227" text-anchor="middle">Sentinel</text>
+  <text class="sub" x="305" y="245" text-anchor="middle">detects · signals</text>
+  <rect class="box" x="400" y="200" width="130" height="64" rx="8"/>
+  <text class="label" x="465" y="227" text-anchor="middle">Oracle</text>
+  <text class="sub" x="465" y="245" text-anchor="middle">investigates</text>
+  <path class="flow" d="M190 228 H236"/>
+  <path class="flow" d="M370 232 H396"/>
+  <text class="sub" x="385" y="300" text-anchor="middle">typed action proposal + evidence</text>
+  <path class="flow" d="M465 264 C465 320 560 320 616 292"/>
+
+  <!-- Authority -->
+  <rect class="box rust" x="620" y="190" width="150" height="76" rx="8"/>
+  <text class="label" x="695" y="218" text-anchor="middle">Policy Engine (Rust)</text>
+  <text class="sub" x="695" y="236" text-anchor="middle">sole authority</text>
+  <text class="sub" x="695" y="252" text-anchor="middle">leases · consent · scope</text>
+
+  <rect class="box" x="620" y="300" width="150" height="58" rx="8"/>
+  <text class="label" x="695" y="324" text-anchor="middle">Adapters</text>
+  <text class="sub" x="695" y="342" text-anchor="middle">execute · verify · reverse</text>
+  <path class="flow" d="M695 266 V296"/>
+  <path class="flow" d="M770 329 C895 329 895 100 604 96"/>
+  <text class="edge" x="782" y="228">bounded,</text>
+  <text class="edge" x="782" y="242">reversible</text>
+  <text class="edge" x="782" y="256">change</text>
+</svg>

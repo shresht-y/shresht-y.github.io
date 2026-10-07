@@ -1,0 +1,19 @@
+{
+  "name": "TODO: Your Name",
+  "role": "TODO: e.g. Software engineer — systems, security and local-first AI",
+  "location": "TODO: City, Country (or remove)",
+  "bio": "TODO: Two or three sentences about who you are, what you build and what kind of role you are looking for.",
+  "availability": "TODO: e.g. Open to internships / new-grad roles from Summer 2027 (or remove)",
+  "links": [
+    { "label": "GitHub", "url": "https://github.com/shresht-y" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/shreshta-yadav/" },
+    { "label": "Email", "url": "shreshtyadav245@gmail.com" }
+  ],
+  "skills": [
+    { "group": "Languages", "items": ["Rust", "Python", "TypeScript"] },
+    { "group": "Systems", "items": ["Linux networking", "Protocol Buffers", "Docker"] },
+    { "group": "Practice", "items": ["CI/CD with GitHub Actions", "Supply-chain security", "Architecture Decision Records", "Cross-language contract testing"] }
+  ],
+  "codeAccessNote": "These repositories are private while in active development. Source access is available to recruiters and interviewers on request.",
+  "codeAccessUrl": "TODO: mailto:you@example.com?subject=Code%20access%20request"
+}

@@ -1,0 +1,55 @@
+name: Build and deploy portfolio
+
+# Rebuilds the site from the private project repositories' progress metadata.
+# - schedule: every 30 minutes (GitHub may delay scheduled runs under load)
+# - repository_dispatch: instant rebuild when a project repo pings (templates/notify-portfolio.yml)
+# - push / manual: after editing the site itself
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "*/30 * * * *"
+  repository_dispatch:
+    types: [project-pushed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Collect progress metadata from project repositories
+        run: node scripts/collect.mjs
+        env:
+          # Fine-grained token: read-only "Contents" + "Metadata" (+ "Actions" for CI status)
+          # on the project repositories only. Never give it write access.
+          GH_TOKEN: ${{ secrets.PORTFOLIO_READ_TOKEN }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

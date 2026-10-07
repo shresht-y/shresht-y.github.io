@@ -1,0 +1,92 @@
+{
+  "owner": "shresht-y",
+  "maxCommitsPerBranch": 500,
+  "recentCommits": 25,
+  "activityWeeks": 26,
+  "commitFilter": {
+    "exclude": ["\\bwip\\b", "\\bprivate\\b", "\\bsecret\\b"],
+    "flags": "i"
+  },
+  "projects": [
+    {
+      "id": "netknight",
+      "name": "NetKnight",
+      "tagline": "A local-first household cybersecurity gateway where AI can propose actions but never authorize them.",
+      "summary": "NetKnight is a local-first household security platform. A Rust data plane forwards packets deterministically, without depending on any AI. Two unprivileged Python services — Sentinel for detection and Oracle for investigation — can only propose actions. A Rust policy engine alone authorizes typed, leased, verified and reversible actions, which narrow adapters execute and roll back.",
+      "stack": ["Rust", "Python", "TypeScript", "Protocol Buffers", "GitHub Actions", "Linux"],
+      "highlights": [
+        "Protobuf wire contracts with generated Rust, Python and TypeScript clients, checked by a cross-language compatibility matrix against a frozen baseline",
+        "Development security gate: secret scanning, OSV dependency audit and a license inventory that fails closed when offline",
+        "Reproducible setup with exact toolchain pins, verified on Windows and Linux in CI",
+        "Every design choice recorded as an Architecture Decision Record; every task closes with validation evidence"
+      ],
+      "roadmap": [
+        { "id": "M0", "title": "Reproducible development and contracts" },
+        { "id": "M1", "title": "Safe deterministic gateway" },
+        { "id": "M2", "title": "Observable household inventory" },
+        { "id": "M3", "title": "Explainable memory" },
+        { "id": "M4", "title": "Consent and policy" },
+        { "id": "M5", "title": "Sentinel signal" },
+        { "id": "M6", "title": "Reversible action" },
+        { "id": "M7", "title": "Analyst loop" },
+        { "id": "MVP", "title": "End-to-end acceptance" }
+      ],
+      "diagram": "assets/diagrams/netknight.svg",
+      "repos": [
+        {
+          "name": "NetKnight",
+          "branches": ["codex/phase-1-safe-lab-gateway", "main"],
+          "localPath": "../NetKnight"
+        }
+      ],
+      "progress": {
+        "repo": "NetKnight",
+        "branch": "codex/phase-1-safe-lab-gateway",
+        "registry": "tasks/task-status.json",
+        "taskPattern": "^tasks/phase-(\\d+)/(\\d{3})-[^/]+\\.md$",
+        "phaseReadmePattern": "^tasks/phase-(\\d+)/README\\.md$",
+        "decisionPattern": "^docs/decisions/ADR-\\d+[^/]*\\.md$",
+        "statusTable": { "path": "STATUS.md", "header": "Capability" },
+        "phases": { "0": "Repository and contracts", "1": "Safe lab gateway" },
+        "milestoneForPhase": { "0": "M0", "1": "M1" }
+      }
+    },
+    {
+      "id": "paios",
+      "name": "PAIOS",
+      "tagline": "A local-first personal AI operating system that keeps your knowledge and models on your own hardware.",
+      "summary": "PAIOS (Personal AI Operating System) is a local-first platform for a private AI assistant. Its backend builds a privacy-first Knowledge Kernel — an authoritative catalog, encrypted sources, custom indexes and a local model — and a separate Next.js Control Plane lets the user inspect and manage the local stack.",
+      "stack": ["Python", "Rust", "TypeScript", "Next.js", "Tailwind CSS", "Docker"],
+      "highlights": [
+        "Strictly sequential, numbered engineering tasks, each with an approved plan, validation and a focused commit",
+        "Control Plane browser app for knowledge search, provenance history, graph inspection and confirmed maintenance controls",
+        "Private Knowledge Kernel that keeps sources, indexes and the model on user-controlled hardware"
+      ],
+      "repos": [
+        {
+          "name": "PAIOS",
+          "branches": ["phase-4/private-knowledge-kernel", "main"],
+          "localPath": "../PAIOS"
+        },
+        {
+          "name": "PAIOS-Front-End",
+          "branches": ["main"],
+          "localPath": "../PAIOS-Front-End"
+        }
+      ],
+      "progress": {
+        "repo": "PAIOS",
+        "branch": "phase-4/private-knowledge-kernel",
+        "registry": "tasks/task-status.json",
+        "taskPattern": "^tasks/phase (\\d+)/(\\d{3})_[^/]+\\.md$",
+        "phaseReadmePattern": "^tasks/phase (\\d+)/README\\.md$",
+        "phases": {
+          "1": "Platform foundation",
+          "2": "Document ingestion and retrieval",
+          "4": "Private Knowledge Kernel",
+          "5": "Chat MVP"
+        }
+      }
+    }
+  ]
+}

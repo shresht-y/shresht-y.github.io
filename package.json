@@ -1,0 +1,13 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio site with live progress from private project repositories. No dependencies.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "collect": "node scripts/collect.mjs",
+    "collect:local": "node scripts/collect.mjs --local",
+    "serve": "node scripts/serve.mjs",
+    "preview": "node scripts/collect.mjs --local && node scripts/serve.mjs"
+  }
+}
