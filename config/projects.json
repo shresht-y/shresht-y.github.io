@@ -4,87 +4,166 @@
   "recentCommits": 25,
   "activityWeeks": 26,
   "commitFilter": {
-    "exclude": ["\\bwip\\b", "\\bprivate\\b", "\\bsecret\\b"],
+    "exclude": [
+      "\\bwip\\b",
+      "\\bprivate\\b",
+      "\\bsecret\\b"
+    ],
     "flags": "i"
   },
   "projects": [
     {
       "id": "netknight",
       "name": "NetKnight",
-      "tagline": "A local-first household cybersecurity gateway where AI can propose actions but never authorize them.",
-      "summary": "NetKnight is a local-first household security platform. A Rust data plane forwards packets deterministically, without depending on any AI. Two unprivileged Python services — Sentinel for detection and Oracle for investigation — can only propose actions. A Rust policy engine alone authorizes typed, leased, verified and reversible actions, which narrow adapters execute and roll back.",
-      "stack": ["Rust", "Python", "TypeScript", "Protocol Buffers", "GitHub Actions", "Linux"],
+      "tagline": "A local-first home network security system where AI can investigate and propose, but only a deterministic Rust policy engine can act.",
+      "summary": "NetKnight aims to give an ordinary household the protection of a small security operations team without sending its data to the cloud. It learns which devices, services and routines are normal for a home, investigates anything unusual, and explains each conclusion with the evidence behind it. The core design rule is that AI never touches the network directly: a Rust data plane forwards traffic deterministically and keeps working even if every AI component fails; Sentinel (detection) and Oracle (investigation) run unprivileged and can only propose; and a Rust policy engine alone authorizes typed, time-limited, verified and reversible actions. The development foundation is complete. Phase 1, a safe lab gateway, is in progress.",
+      "stack": [
+        "Rust",
+        "Python",
+        "TypeScript",
+        "Protocol Buffers",
+        "GitHub Actions",
+        "Linux"
+      ],
       "highlights": [
-        "Protobuf wire contracts with generated Rust, Python and TypeScript clients, checked by a cross-language compatibility matrix against a frozen baseline",
-        "Development security gate: secret scanning, OSV dependency audit and a license inventory that fails closed when offline",
-        "Reproducible setup with exact toolchain pins, verified on Windows and Linux in CI",
-        "Every design choice recorded as an Architecture Decision Record; every task closes with validation evidence"
+        "Safety by architecture: AI services run unprivileged and can only propose; every action is typed, leased, verified and reversible, and packet forwarding never depends on a model",
+        "One Protocol Buffers source generates Rust, Python and TypeScript clients, checked by a cross-language compatibility matrix against a frozen baseline",
+        "Fail-closed security gate in CI: secret scanning, OSV vulnerability audit and a dependency license inventory",
+        "Reproducible builds with exact toolchain pins, verified on Windows and Linux runners",
+        "Each design decision is recorded as an Architecture Decision Record, and every numbered task closes with written validation evidence"
       ],
       "roadmap": [
-        { "id": "M0", "title": "Reproducible development and contracts" },
-        { "id": "M1", "title": "Safe deterministic gateway" },
-        { "id": "M2", "title": "Observable household inventory" },
-        { "id": "M3", "title": "Explainable memory" },
-        { "id": "M4", "title": "Consent and policy" },
-        { "id": "M5", "title": "Sentinel signal" },
-        { "id": "M6", "title": "Reversible action" },
-        { "id": "M7", "title": "Analyst loop" },
-        { "id": "MVP", "title": "End-to-end acceptance" }
+        {
+          "id": "M0",
+          "title": "Reproducible development and contracts"
+        },
+        {
+          "id": "M1",
+          "title": "Safe deterministic gateway"
+        },
+        {
+          "id": "M2",
+          "title": "Observable household inventory"
+        },
+        {
+          "id": "M3",
+          "title": "Explainable memory"
+        },
+        {
+          "id": "M4",
+          "title": "Consent and policy"
+        },
+        {
+          "id": "M5",
+          "title": "Sentinel signal"
+        },
+        {
+          "id": "M6",
+          "title": "Reversible action"
+        },
+        {
+          "id": "M7",
+          "title": "Analyst loop"
+        },
+        {
+          "id": "MVP",
+          "title": "End-to-end acceptance"
+        }
       ],
       "diagram": "assets/diagrams/netknight.svg",
       "repos": [
         {
           "name": "NetKnight",
-          "branches": ["codex/phase-1-safe-lab-gateway", "main"],
+          "branches": "all",
           "localPath": "../NetKnight"
         }
       ],
       "progress": {
         "repo": "NetKnight",
-        "branch": "codex/phase-1-safe-lab-gateway",
+        "branch": "auto",
         "registry": "tasks/task-status.json",
         "taskPattern": "^tasks/phase-(\\d+)/(\\d{3})-[^/]+\\.md$",
         "phaseReadmePattern": "^tasks/phase-(\\d+)/README\\.md$",
         "decisionPattern": "^docs/decisions/ADR-\\d+[^/]*\\.md$",
-        "statusTable": { "path": "STATUS.md", "header": "Capability" },
-        "phases": { "0": "Repository and contracts", "1": "Safe lab gateway" },
-        "milestoneForPhase": { "0": "M0", "1": "M1" }
+        "statusTable": {
+          "path": "STATUS.md",
+          "header": "Capability"
+        },
+        "phases": {
+          "0": "Repository and contracts",
+          "1": "Safe lab gateway"
+        },
+        "milestoneForPhase": {
+          "0": "M0",
+          "1": "M1"
+        }
       }
     },
     {
-      "id": "paios",
-      "name": "PAIOS",
-      "tagline": "A local-first personal AI operating system that keeps your knowledge and models on your own hardware.",
-      "summary": "PAIOS (Personal AI Operating System) is a local-first platform for a private AI assistant. Its backend builds a privacy-first Knowledge Kernel — an authoritative catalog, encrypted sources, custom indexes and a local model — and a separate Next.js Control Plane lets the user inspect and manage the local stack.",
-      "stack": ["Python", "Rust", "TypeScript", "Next.js", "Tailwind CSS", "Docker"],
+      "id": "engawa",
+      "name": "Engawa",
+      "tagline": "A private AI assistant whose memory lives on your own hardware. Nothing leaves your home without your approval.",
+      "summary": "Engawa (en-GAH-wah) is named after the veranda of a Japanese home, the threshold between inside and outside, which matches its governing rule: local brain, selectively disclosed actions. It is a self-hosted personal AI built memory-first. An encrypted Knowledge Kernel keeps your documents, notes and the relationships between them on hardware you control, with fast, attributable search across all of it. Later phases add grounded local chat; several switchable assistants that share one private memory and can discuss a question together in a \"Roundtable\"; secure remote access; opt-in hosted reasoning that only ever sees content you approve; email, calendar and smart-home connections; voice; and bounded agents.",
+      "stack": [
+        "Rust",
+        "Python",
+        "TypeScript",
+        "Next.js",
+        "SQLCipher",
+        "Tantivy",
+        "Neo4j",
+        "Qdrant",
+        "Docker"
+      ],
       "highlights": [
-        "Strictly sequential, numbered engineering tasks, each with an approved plan, validation and a focused commit",
-        "Control Plane browser app for knowledge search, provenance history, graph inspection and confirmed maintenance controls",
-        "Private Knowledge Kernel that keeps sources, indexes and the model on user-controlled hardware"
+        "Encrypted Knowledge Kernel: a SQLCipher catalog and an XChaCha20-Poly1305 source vault are the single source of truth; search indexes and graphs are rebuildable projections",
+        "Hybrid retrieval over a Tantivy lexical index, Qdrant vector search and a Neo4j knowledge graph, with source attribution",
+        "Rust kernel sidecar behind protected local IPC, designed to have no outbound network access",
+        "Encrypted backup and recovery, lifecycle reconciliation and zero-downtime index rebuilds",
+        "Next.js Control Plane for knowledge search, provenance history, graph inspection and confirmed maintenance actions",
+        "Strictly sequential numbered tasks, each with an approved plan, validation record and focused commit"
       ],
       "repos": [
         {
           "name": "PAIOS",
-          "branches": ["phase-4/private-knowledge-kernel", "main"],
-          "localPath": "../PAIOS"
+          "branches": "all",
+          "branchExclude": [
+            "^archive/"
+          ],
+          "localPath": "../PAIOS",
+          "label": "Engawa core"
         },
         {
           "name": "PAIOS-Front-End",
-          "branches": ["main"],
-          "localPath": "../PAIOS-Front-End"
+          "branches": "all",
+          "branchExclude": [
+            "^archive/"
+          ],
+          "localPath": "../PAIOS-Front-End",
+          "label": "Engawa web"
         }
       ],
       "progress": {
         "repo": "PAIOS",
-        "branch": "phase-4/private-knowledge-kernel",
+        "branch": "auto",
+        "branchExclude": [
+          "^archive/"
+        ],
         "registry": "tasks/task-status.json",
         "taskPattern": "^tasks/phase (\\d+)/(\\d{3})_[^/]+\\.md$",
         "phaseReadmePattern": "^tasks/phase (\\d+)/README\\.md$",
         "phases": {
           "1": "Platform foundation",
           "2": "Document ingestion and retrieval",
+          "3": "Control Plane skeleton",
           "4": "Private Knowledge Kernel",
-          "5": "Chat MVP"
+          "5": "Grounded local chat",
+          "6": "Multiple assistants and Roundtable",
+          "7": "Remote access and devices",
+          "8": "Selective hosted reasoning",
+          "9": "Connections, research and smart home",
+          "10": "Voice and presence",
+          "11": "Agents, skills and bounded automation"
         }
       }
     }

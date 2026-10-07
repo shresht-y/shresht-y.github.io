@@ -47,6 +47,18 @@ class GitHubSource {
     return b?.commit?.sha ?? null;
   }
 
+  async branches() {
+    this.branchCache ??= (async () => {
+      const out = [];
+      for (const b of (await this.api(`${this.base}/branches?per_page=100`)) ?? []) {
+        const c = await this.api(`${this.base}/commits/${b.commit.sha}`);
+        out.push({ name: b.name, sha: b.commit.sha, date: c?.commit?.committer?.date ?? null });
+      }
+      return out;
+    })();
+    return this.branchCache;
+  }
+
   async files(ref) {
     const tree = await this.api(`${this.base}/git/trees/${ref}?recursive=1`);
     if (tree?.truncated) console.warn(`warning: tree for ${this.base} truncated`);
@@ -109,6 +121,21 @@ class LocalSource {
       } catch { /* try the next candidate */ }
     }
     return null;
+  }
+
+  // Local and origin/* branches by short name, keeping whichever copy is newer.
+  async branches() {
+    const seen = new Map();
+    const refs = this.git(['for-each-ref', '--format=%(refname:short)%09%(objectname)%09%(committerdate:iso-strict)',
+      'refs/heads', 'refs/remotes/origin']);
+    for (const line of refs.split('\n')) {
+      const [ref, sha, date] = line.split('\t');
+      if (!ref || !sha || ref === 'origin' || ref === 'origin/HEAD') continue;
+      const name = ref.replace(/^origin\//, '');
+      const prev = seen.get(name);
+      if (!prev || Date.parse(date) > Date.parse(prev.date)) seen.set(name, { name, sha, date });
+    }
+    return [...seen.values()];
   }
 
   async files(ref) {
@@ -213,12 +240,37 @@ function parseStatusTable(text, header) {
   return rows;
 }
 
+const excluder = (patterns) => {
+  const res = (patterns ?? []).map((p) => new RegExp(p));
+  return (name) => res.some((re) => re.test(name));
+};
+
+// "auto": among all non-excluded branches, read the task registry that shows the most
+// progress (completed_through, then the newest commit). Registries only move forward on
+// the active phase branch, so this follows you onto new phase branches without config edits.
+async function pickProgressRef(source, cfg) {
+  if (cfg.branch !== 'auto') return { ref: await source.resolve(cfg.branch), branch: cfg.branch };
+  const excluded = excluder(cfg.branchExclude);
+  let best = null;
+  for (const b of await source.branches()) {
+    if (excluded(b.name)) continue;
+    const text = await source.read(b.sha, cfg.registry);
+    if (!text) continue;
+    let done = -1;
+    try { done = JSON.parse(text).completed_through ?? -1; } catch { continue; }
+    const better = !best || done > best.done || (done === best.done && Date.parse(b.date) > Date.parse(best.date));
+    if (better) best = { ref: b.sha, branch: b.name, done, date: b.date };
+  }
+  return best ?? { ref: null, branch: null };
+}
+
 async function collectProgress(source, cfg, commits) {
-  const ref = await source.resolve(cfg.branch);
+  const { ref, branch } = await pickProgressRef(source, cfg);
   if (!ref) {
-    console.warn(`warning: progress branch ${cfg.branch} not found`);
+    console.warn(`warning: no branch with ${cfg.registry} found`);
     return null;
   }
+  console.log(`  progress from ${branch}`);
   const files = await source.files(ref);
   const registryText = await source.read(ref, cfg.registry);
   const registry = registryText ? JSON.parse(registryText) : null;
@@ -285,12 +337,26 @@ async function collectProgress(source, cfg, commits) {
     : [];
 
   const done = tasks.filter((t) => t.status === 'complete').length;
+  const current = tasks.find((t) => t.status === 'in_progress') ?? tasks.find((t) => t.status === 'next') ?? null;
+  // The phase being worked on: the current task's phase, else the last phase with any progress.
+  const phaseNow = phases.find((p) => p.number === current?.phase)
+    ?? [...phases].reverse().find((p) => p.status !== 'planned')
+    ?? phases[0];
   return {
     completedThrough: registry?.completed_through ?? null,
     nextTask: registry?.next_task ?? null,
     tasksComplete: done,
     tasksKnown: tasks.length,
-    current: tasks.find((t) => t.status === 'in_progress') ?? tasks.find((t) => t.status === 'next') ?? null,
+    current,
+    currentPhase: phaseNow && {
+      number: phaseNow.number,
+      name: phaseNow.name,
+      position: phases.indexOf(phaseNow) + 1,
+      tasksComplete: phaseNow.tasks.filter((t) => t.status === 'complete').length,
+      tasksKnown: phaseNow.tasks.length,
+    },
+    phasesKnown: phases.length,
+    phasesComplete: phases.filter((p) => p.status === 'complete').length,
     phases,
     decisions,
     statusTable,
@@ -321,9 +387,16 @@ async function collectProject(project) {
   for (const repo of project.repos) {
     const source = makeSource(repo);
     sources[repo.name] = source;
+    // "all": every branch except branchExclude, newest first, so new branches need no config.
+    const excluded = excluder(repo.branchExclude);
+    const heads = repo.branches === 'all'
+      ? (await source.branches())
+        .filter((b) => !excluded(b.name))
+        .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+        .map((b) => ({ branch: b.name, head: b.sha }))
+      : await Promise.all(repo.branches.map(async (branch) => ({ branch, head: await source.resolve(branch) })));
     let ref = null;
-    for (const branch of repo.branches) {
-      const head = await source.resolve(branch);
+    for (const { branch, head } of heads) {
       if (!head) {
         console.warn(`warning: ${repo.name}@${branch} not found`);
         continue;
@@ -331,7 +404,7 @@ async function collectProject(project) {
       ref ??= head;
       const list = await source.commits(head, max);
       if (list.length >= max) capped = true;
-      for (const c of list) if (!seen.has(c.sha)) seen.set(c.sha, { ...c, repo: repo.name });
+      for (const c of list) if (!seen.has(c.sha)) seen.set(c.sha, { ...c, repo: repo.label ?? repo.name });
     }
     if (ref) {
       for (const [lang, bytes] of Object.entries(await source.languages(ref))) {

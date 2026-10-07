@@ -1,19 +1,80 @@
 {
-  "name": "TODO: Your Name",
-  "role": "TODO: e.g. Software engineer — systems, security and local-first AI",
-  "location": "TODO: City, Country (or remove)",
-  "bio": "TODO: Two or three sentences about who you are, what you build and what kind of role you are looking for.",
-  "availability": "TODO: e.g. Open to internships / new-grad roles from Summer 2027 (or remove)",
+  "name": "Shreshta Yadav",
+  "role": "Software Engineer · backend systems, security and local-first AI",
+  "location": "Atlanta, GA",
+  "bio": "I'm a software engineer at AT&T, where I build TypeScript and NestJS services and helped move a legacy Express monolith to microservices. I studied Computer Science at Georgia Tech and was a teaching assistant for Computer Systems & Networks. Outside work I'm building NetKnight and Engawa: local-first systems in Rust, Python and TypeScript designed around safety, verification and privacy.",
+  "availability": "Software Engineer at AT&T · Georgia Tech B.S. Computer Science, 2025 · Atlanta, GA",
   "links": [
     { "label": "GitHub", "url": "https://github.com/shresht-y" },
     { "label": "LinkedIn", "url": "https://www.linkedin.com/in/shreshta-yadav/" },
-    { "label": "Email", "url": "shreshtyadav245@gmail.com" }
+    { "label": "Email", "url": "mailto:shreshtyadav245@gmail.com" }
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "org": "AT&T",
+      "dates": "July 2025 – Present",
+      "stack": ["TypeScript", "Node.js", "NestJS", "Angular"],
+      "points": [
+        "Migrated backend functionality from a legacy Express.js monolith to NestJS microservices, enabling independent service deployment.",
+        "Designed RESTful APIs and modular service layers with dependency injection; introduced structured logging and standardized error handling.",
+        "Built workflow improvements that reduced technician delays, contributing about $130,000 in realized cost savings in 2025.",
+        "Co-architected a React Native (Expo) proof-of-concept mobile admin portal and owned its navigation infrastructure."
+      ]
+    },
+    {
+      "title": "Software Engineering Intern",
+      "org": "AT&T",
+      "dates": "June 2024 – August 2024",
+      "stack": ["React", "TypeScript", "Backstage"],
+      "points": [
+        "Built custom React and TypeScript plugins in Spotify Backstage to standardize internal developer tooling across teams.",
+        "Implemented a design-system-driven redesign of the internal developer portal.",
+        "Built a React Native app for technician safety; placed 3rd of 19 teams in an internal innovation challenge."
+      ]
+    },
+    {
+      "title": "Teaching Assistant, Computer Systems & Networks",
+      "org": "Georgia Institute of Technology",
+      "dates": "May 2023 – August 2024",
+      "stack": ["C", "Python"],
+      "points": [
+        "Led weekly labs on memory hierarchy, processor architecture, concurrency, caching and networking.",
+        "Authored assignments and exam material on systems programming, low-level debugging and performance."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "Georgia Institute of Technology",
+      "degree": "B.S. in Computer Science",
+      "dates": "August 2021 – June 2025",
+      "details": "GPA 3.70 · Major GPA 4.0 · Threads: Intelligence and Information Internetworks"
+    }
+  ],
+  "otherProjects": [
+    {
+      "name": "AI Lyrics-to-Art Generator",
+      "summary": "Full-stack web app that generates album artwork from song lyrics with Stable Diffusion and Hugging Face models, using asynchronous request handling for long-running generation.",
+      "stack": ["React", "Python", "Stable Diffusion"]
+    },
+    {
+      "name": "HackGT 8 · Carpool Coordination Platform",
+      "summary": "Hackathon web platform for coordinating student carpools to events; advanced to round 2 and presented to judges.",
+      "stack": ["React", "Python"]
+    },
+    {
+      "name": "VGDev · StarFall and Paravoid",
+      "summary": "Gameplay systems in C# for student-built games, developed with designers and artists in an iterative pipeline.",
+      "stack": ["C#"]
+    }
   ],
   "skills": [
-    { "group": "Languages", "items": ["Rust", "Python", "TypeScript"] },
-    { "group": "Systems", "items": ["Linux networking", "Protocol Buffers", "Docker"] },
-    { "group": "Practice", "items": ["CI/CD with GitHub Actions", "Supply-chain security", "Architecture Decision Records", "Cross-language contract testing"] }
+    { "group": "Languages", "items": ["TypeScript", "JavaScript", "Python", "Rust", "C", "C#"] },
+    { "group": "Frameworks", "items": ["Node.js", "NestJS", "React", "React Native", "Angular", "Expo"] },
+    { "group": "Systems", "items": ["Microservices", "REST API design", "Distributed systems", "Protocol Buffers", "Docker"] },
+    { "group": "Practice", "items": ["CI/CD with GitHub Actions", "Supply-chain security", "Architecture Decision Records", "Cross-language contract testing", "Structured logging"] }
   ],
-  "codeAccessNote": "These repositories are private while in active development. Source access is available to recruiters and interviewers on request.",
-  "codeAccessUrl": "TODO: mailto:you@example.com?subject=Code%20access%20request"
+  "codeAccessNote": "NetKnight and Engawa are private while in active development. Source access is available to recruiters and interviewers on request.",
+  "codeAccessUrl": "mailto:shreshtyadav245@gmail.com?subject=Code%20access%20request"
 }

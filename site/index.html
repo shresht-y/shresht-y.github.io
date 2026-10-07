@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portfolio</title>
-  <meta name="description" content="Projects, live engineering progress and contact details.">
+  <title>Shreshta Yadav</title>
+  <meta name="description" content="Shreshta Yadav, software engineer: projects with live engineering progress, experience and contact details.">
+  <link rel="preload" href="data/profile.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="data/generated/site.json" as="fetch" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/style.css">
   <script type="module" src="assets/app.js"></script>
 </head>
-<body data-page="home">
+<body data-page="home" class="loading">
   <a class="skip" href="#main">Skip to content</a>
   <header class="topbar">
     <nav class="wrap nav" aria-label="Main">
-      <a class="brand" href="./" data-bind="name">Portfolio</a>
+      <a class="brand" href="./" data-bind="name">Shreshta Yadav</a>
       <ul>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
         <li><a href="#activity">Activity</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -25,8 +28,9 @@
   <main id="main" class="wrap">
     <section class="hero" aria-labelledby="hero-name">
       <p class="eyebrow" data-bind="role"></p>
-      <h1 id="hero-name" data-bind="name"></h1>
+      <h1 id="hero-name" data-bind="name">Shreshta Yadav</h1>
       <p class="lede" data-bind="bio"></p>
+      <div class="loader hero-loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div>
       <p class="muted" data-bind="availability"></p>
       <ul class="links" data-slot="links"></ul>
     </section>
@@ -36,24 +40,39 @@
         <h2 id="projects-title">Projects</h2>
         <p class="muted small" data-slot="updated"></p>
       </div>
-      <div class="cards" data-slot="projects"></div>
+      <div class="cards" data-slot="projects"><div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div></div>
+    </section>
+
+    <section id="experience" aria-labelledby="experience-title">
+      <h2 id="experience-title">Experience</h2>
+      <div class="timeline" data-slot="experience"><div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div></div>
+    </section>
+
+    <section id="education" aria-labelledby="education-title">
+      <h2 id="education-title">Education</h2>
+      <div class="timeline" data-slot="education"><div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div></div>
+    </section>
+
+    <section id="other-projects" aria-labelledby="other-title">
+      <h2 id="other-title">Other projects</h2>
+      <div class="cards" data-slot="other-projects"><div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div></div>
     </section>
 
     <section id="activity" aria-labelledby="activity-title">
       <h2 id="activity-title">Recent activity</h2>
       <p class="muted">Latest commits across all projects, pulled automatically from the repositories.</p>
-      <ol class="feed" data-slot="feed"></ol>
+      <ol class="feed" data-slot="feed"><li class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></li></ol>
     </section>
 
     <section id="skills" aria-labelledby="skills-title">
       <h2 id="skills-title">Skills</h2>
-      <div class="skills" data-slot="skills"></div>
+      <div class="skills" data-slot="skills"><div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div></div>
     </section>
 
     <section id="contact" aria-labelledby="contact-title">
       <h2 id="contact-title">Contact</h2>
       <p class="muted" data-bind="codeAccessNote"></p>
-      <ul class="links" data-slot="contact"></ul>
+      <ul class="links" data-slot="contact"><li class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></li></ul>
     </section>
   </main>
 

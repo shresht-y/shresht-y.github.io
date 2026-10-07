@@ -49,16 +49,30 @@ function chip(status) {
   return h('span', { class: `chip ${status}` }, STATUS_LABEL[status] ?? status);
 }
 
-function progressBar(p, label = 'Tasks complete') {
-  if (!p?.tasksKnown) return null;
-  const pct = Math.round((p.tasksComplete / p.tasksKnown) * 100);
-  return h('div', { class: 'progress' },
+function bar(done, total, label, detail, hint, quiet = false) {
+  if (!total) return null;
+  const pct = Math.round((done / total) * 100);
+  return h('div', { class: `progress${quiet ? ' quiet' : ''}`, title: hint },
     h('div', { class: 'progress-label' },
-      h('span', {}, label), h('span', {}, `${p.tasksComplete} / ${p.tasksKnown} · ${pct}%`)),
+      h('span', {}, label), h('span', {}, `${detail} · ${pct}%`)),
     h('div', {
-      class: 'bar', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': p.tasksKnown,
-      'aria-valuenow': p.tasksComplete, 'aria-label': label,
+      class: 'bar', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': total,
+      'aria-valuenow': done, 'aria-label': `${label}: ${detail}`,
     }, h('span', { style: `width:${pct}%` })));
+}
+
+// Two bars: how far into the phase being worked on now, and overall across every task
+// written so far. Later phases are broken into tasks only when they start, so the overall
+// total grows over time; the phase count says how much of the roadmap that covers.
+function progressBars(g) {
+  if (!g?.tasksKnown) return null;
+  const ph = g.currentPhase;
+  return h('div', { class: 'progress-group' },
+    ph?.tasksKnown ? bar(ph.tasksComplete, ph.tasksKnown, `Phase ${ph.number} · ${ph.name}`,
+      `${ph.tasksComplete} / ${ph.tasksKnown} tasks`, 'Tasks complete in the phase being worked on now') : null,
+    bar(g.tasksComplete, g.tasksKnown, 'Overall',
+      `${g.tasksComplete} / ${g.tasksKnown} tasks · ${g.phasesComplete} of ${g.phasesKnown} phases done`,
+      'All tasks written so far. Later phases are broken into tasks when they start, so this total grows.', true));
 }
 
 // One series of weekly commit counts: single hue, bars rounded at the top, a native
@@ -125,7 +139,7 @@ function projectCard(p) {
       h('p', { class: 'muted small' },
         `Last active ${ago(p.stats.lastCommit)} · ${p.stats.commits}${p.stats.commitsCapped ? '+' : ''} commits since ${fmtDate(p.stats.firstCommit)}`)),
     h('p', {}, p.tagline),
-    progressBar(p.progress),
+    progressBars(p.progress),
     cur && h('p', { class: 'small' }, chip(cur.status), ' ', `Task ${cur.number}: ${cur.title}`),
     sparkline(p.activity),
     h('ul', { class: 'tags', 'aria-label': 'Stack' }, p.stack.map((s) => h('li', {}, s))),
@@ -137,6 +151,24 @@ function renderHome(profile, site) {
   document.querySelector('[data-slot="contact"]').replaceChildren(
     ...profile.links.filter((l) => l.label !== 'GitHub').map(linkItem),
     linkItem({ label: 'Request code access', url: profile.codeAccessUrl }));
+  document.querySelector('[data-slot="experience"]').replaceChildren(...(profile.experience ?? []).map((job) =>
+    h('article', { class: 'entry' },
+      h('div', { class: 'entry-head' },
+        h('h3', {}, job.title, h('span', { class: 'org' }, ` · ${job.org}`)),
+        h('span', { class: 'muted small' }, job.dates)),
+      h('ul', { class: 'tags' }, (job.stack ?? []).map((s) => h('li', {}, s))),
+      h('ul', { class: 'highlights' }, (job.points ?? []).map((p) => h('li', {}, p))))));
+  document.querySelector('[data-slot="education"]').replaceChildren(...(profile.education ?? []).map((ed) =>
+    h('article', { class: 'entry' },
+      h('div', { class: 'entry-head' },
+        h('h3', {}, ed.degree, h('span', { class: 'org' }, ` · ${ed.school}`)),
+        h('span', { class: 'muted small' }, ed.dates)),
+      ed.details && h('p', { class: 'muted' }, ed.details))));
+  document.querySelector('[data-slot="other-projects"]').replaceChildren(...(profile.otherProjects ?? []).map((p) =>
+    h('article', { class: 'card' },
+      h('h3', {}, p.name),
+      h('p', {}, p.summary),
+      h('ul', { class: 'tags' }, (p.stack ?? []).map((s) => h('li', {}, s))))));
   document.querySelector('[data-slot="skills"]').replaceChildren(...(profile.skills ?? []).map((g) =>
     h('div', {}, h('h3', {}, g.group), h('ul', { class: 'tags' }, g.items.map((i) => h('li', {}, i))))));
 
@@ -208,14 +240,15 @@ async function renderProject(profile, site) {
 
   const ciState = p.ci?.conclusion === 'success' ? 'success' : p.ci?.conclusion ? 'failure' : null;
   const stats = h('div', { class: 'stats' },
-    g && stat(`${g.tasksComplete}/${g.tasksKnown}`, 'tasks complete'),
+    g?.currentPhase?.tasksKnown && stat(`${g.currentPhase.tasksComplete}/${g.currentPhase.tasksKnown}`,
+      `Phase ${g.currentPhase.number} tasks done`),
     stat(`${p.stats.commits}${p.stats.commitsCapped ? '+' : ''}`, 'commits'),
     stat(ago(p.stats.lastCommit), 'last commit'),
     stat(fmtDate(p.stats.firstCommit), 'started'),
     ciState && h('div', { class: 'stat' }, h('b', {}, chip(ciState)), h('span', {}, `CI · ${ago(p.ci.date)}`)));
 
   const parts = [head, stats, h('div', { class: 'two-col' },
-    h('div', {}, h('h2', {}, 'Progress'), progressBar(g, 'Planned tasks complete'),
+    h('div', {}, h('h2', {}, 'Progress'), progressBars(g),
       g?.current && h('p', {}, chip(g.current.status), ' ', h('b', {}, `Task ${g.current.number}: `), g.current.title)),
     h('div', {}, h('h2', {}, 'Activity'), sparkline(p.activity)))];
 
@@ -276,15 +309,50 @@ async function renderProject(profile, site) {
 
 async function loadJson(path) {
   try {
-    const res = await fetch(path, { cache: 'no-cache' });
+    // Default HTTP caching: GitHub Pages revalidates after a few minutes, and the data only
+    // changes every 30, so moving between pages doesn't wait on the network.
+    const res = await fetch(path);
     return res.ok ? await res.json() : null;
   } catch {
     return null;
   }
 }
 
+// The browser would restore scroll (or jump to #section) before content exists, then the
+// page would jump when it renders. Take over and do it once everything is in place.
+const scrollKey = `scroll:${location.pathname}${location.search}`;
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+addEventListener('pagehide', () => {
+  try { sessionStorage.setItem(scrollKey, String(scrollY)); } catch { /* storage unavailable */ }
+});
+
+function restoreScroll() {
+  const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (target) {
+    target.scrollIntoView({ behavior: 'instant' });
+    return;
+  }
+  const nav = performance.getEntriesByType('navigation')[0]?.type;
+  if (nav !== 'back_forward' && nav !== 'reload') return;
+  let y = 0;
+  try { y = Number(sessionStorage.getItem(scrollKey)) || 0; } catch { /* storage unavailable */ }
+  if (y) scrollTo({ top: y, behavior: 'instant' });
+}
+
 const [profile, site] = await Promise.all([loadJson('data/profile.json'), loadJson('data/generated/site.json')]);
-bindProfile(profile ?? {});
-if (document.body.dataset.page === 'home') renderHome(profile ?? { links: [] }, site);
-else await renderProject(profile ?? {}, site);
-footer(site, profile ?? {});
+try {
+  bindProfile(profile ?? {});
+  if (document.body.dataset.page === 'home') renderHome(profile ?? { links: [] }, site);
+  else await renderProject(profile ?? {}, site);
+  footer(site, profile ?? {});
+} finally {
+  // Never leave a spinner running: anything not filled above failed to load.
+  for (const el of document.querySelectorAll('.loader:not(.hero-loader)')) {
+    const msg = document.createElement(el.tagName === 'LI' ? 'li' : 'p');
+    msg.className = 'muted small';
+    msg.textContent = 'Could not load this section. Try refreshing the page.';
+    el.replaceWith(msg);
+  }
+  document.body.classList.replace('loading', 'ready');
+  restoreScroll();
+}

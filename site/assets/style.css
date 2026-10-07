@@ -67,6 +67,32 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 .skip { position: absolute; left: -9999px; }
 .skip:focus { left: 16px; top: 16px; background: var(--surface); padding: 8px 12px; z-index: 10; }
 
+/* Loading: every data-driven region starts with a spinner and is filled in a single pass,
+   then the page fades in once, so nothing jumps around piece by piece. */
+.loader, .feed li.loader, .links li.loader {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 96px; padding: 0; border: 0; background: none;
+  color: var(--muted); font-size: 0.875rem; grid-column: 1 / -1; list-style: none;
+}
+.links li.loader { min-height: 40px; justify-content: flex-start; }
+.spinner {
+  width: 20px; height: 20px; flex: none; border-radius: 50%;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-loader { display: none; }
+body.loading .hero-loader { display: flex; justify-content: flex-start; min-height: 40px; }
+body.loading [data-bind]:not(.brand):not(#hero-name) { visibility: hidden; }
+body.ready main, body.ready .footer { animation: fade-in 0.2s ease-out; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .spinner { animation-duration: 2.4s; }
+  body.ready main, body.ready .footer { animation: none; }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 .topbar {
   position: sticky; top: 0; z-index: 5;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
@@ -79,7 +105,8 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 .nav a:hover { color: var(--text); }
 .brand { font-weight: 650; color: var(--text) !important; }
 
-main > section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+main > section { padding: 48px 0; border-bottom: 1px solid var(--border); scroll-margin-top: 32px; }
+main > .notice { margin-top: 40px; }
 main > section:last-child { border-bottom: 0; }
 .hero { padding-top: 72px !important; }
 .eyebrow { color: var(--accent); font-weight: 600; margin: 0; }
@@ -144,6 +171,14 @@ main > section:last-child { border-bottom: 0; }
 .feed .meta { color: var(--muted); font-size: 0.8rem; }
 .feed .subject { overflow-wrap: anywhere; }
 
+.timeline { display: grid; gap: 28px; margin-top: 20px; }
+.entry { display: grid; gap: 8px; padding-left: 16px; border-left: 2px solid var(--border); }
+.entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap; }
+.entry h3 { margin: 0; }
+.entry .org { color: var(--text-2); font-weight: 500; }
+.entry .highlights, .entry p { margin: 0; }
+.entry .highlights { color: var(--text-2); }
+
 .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
 .skills h3 { font-size: 0.95rem; color: var(--muted); font-weight: 600; }
 
@@ -191,3 +226,8 @@ th { color: var(--muted); font-weight: 600; font-size: 0.82rem; text-transform: 
   .tasks li { grid-template-columns: 40px 1fr; }
   .tasks li .chip { grid-column: 2; justify-self: start; }
 }
+
+.progress-group { display: grid; gap: 12px; }
+.progress.quiet .progress-label { color: var(--muted); font-size: 0.8rem; }
+.progress.quiet .bar { height: 5px; }
+.progress.quiet .bar > span { background: color-mix(in srgb, var(--accent) 55%, var(--surface-2)); }

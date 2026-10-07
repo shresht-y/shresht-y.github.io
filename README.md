@@ -73,6 +73,20 @@ For each project repository:
 
 Each push then costs a few seconds of that repository's Actions minutes.
 
+## How progress is calculated
+
+- **Tasks** are the numbered task files matched by `taskPattern` (e.g. `tasks/phase-1/012-*.md`).
+  Status comes from the repo's `tasks/task-status.json`: a per-task `status` if listed, otherwise
+  `completed_through` / `next_task`.
+- **Phase bar**: tasks done in the phase being worked on (the current task's phase).
+- **Overall bar**: tasks done out of all task files written so far. Later phases get task files
+  only when they start, so this total grows; the label also shows phases done out of phases known.
+- **Which branch**: with `"branch": "auto"`, every branch (minus `branchExclude`) is checked and
+  the registry showing the most progress wins (highest `completed_through`, then newest commit).
+  Starting a new phase branch needs no config change.
+- **Commits**: `"branches": "all"` reads every branch except `branchExclude`; `label` sets the
+  repository name shown on the site.
+
 ## Adding a project
 
 Add an entry to `config/projects.json`. `progress` is optional; without it a project still

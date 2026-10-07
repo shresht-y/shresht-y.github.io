@@ -3,16 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Project</title>
+  <title>Project · Shreshta Yadav</title>
   <meta name="description" content="Project overview and live engineering progress.">
+  <link rel="preload" href="data/profile.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="data/generated/site.json" as="fetch" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/style.css">
   <script type="module" src="assets/app.js"></script>
 </head>
-<body data-page="project">
+<body data-page="project" class="loading">
   <a class="skip" href="#main">Skip to content</a>
   <header class="topbar">
     <nav class="wrap nav" aria-label="Main">
-      <a class="brand" href="./" data-bind="name">Portfolio</a>
+      <a class="brand" href="./" data-bind="name">Shreshta Yadav</a>
       <ul>
         <li><a href="./#projects">All projects</a></li>
         <li><a href="./#contact">Contact</a></li>
@@ -21,7 +23,7 @@
   </header>
 
   <main id="main" class="wrap" data-slot="project">
-    <p class="muted">Loading…</p>
+    <div class="loader" role="status"><span class="spinner" aria-hidden="true"></span><span>Loading…</span></div>
   </main>
 
   <footer class="wrap footer muted small" data-slot="footer"></footer>
