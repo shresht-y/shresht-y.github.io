@@ -61,12 +61,17 @@
     {
       "name": "HackGT 8 · Carpool Coordination Platform",
       "summary": "Hackathon web platform for coordinating student carpools to events; advanced to round 2 and presented to judges.",
-      "stack": ["React", "Python"]
+      "stack": ["React", "Python"],
+      "links": [{ "label": "GitHub", "url": "https://github.com/shresht-y/HackGT8" }]
     },
     {
       "name": "VGDev · StarFall and Paravoid",
       "summary": "Gameplay systems in C# for student-built games, developed with designers and artists in an iterative pipeline.",
-      "stack": ["C#"]
+      "stack": ["C#"],
+      "links": [
+        { "label": "StarFall", "url": "https://github.com/shresht-y/starfall" },
+        { "label": "Paravoid", "url": "https://github.com/shresht-y/PARAVOID" }
+      ]
     }
   ],
   "skills": [

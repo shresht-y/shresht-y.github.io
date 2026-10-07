@@ -61,18 +61,15 @@ function bar(done, total, label, detail, hint, quiet = false) {
     }, h('span', { style: `width:${pct}%` })));
 }
 
-// Two bars: how far into the phase being worked on now, and overall across every task
-// written so far. Later phases are broken into tasks only when they start, so the overall
-// total grows over time; the phase count says how much of the roadmap that covers.
+// Two bars: tasks done in the phase being worked on now, and overall phases complete.
 function progressBars(g) {
-  if (!g?.tasksKnown) return null;
+  if (!g?.phasesKnown) return null;
   const ph = g.currentPhase;
   return h('div', { class: 'progress-group' },
     ph?.tasksKnown ? bar(ph.tasksComplete, ph.tasksKnown, `Phase ${ph.number} · ${ph.name}`,
       `${ph.tasksComplete} / ${ph.tasksKnown} tasks`, 'Tasks complete in the phase being worked on now') : null,
-    bar(g.tasksComplete, g.tasksKnown, 'Overall',
-      `${g.tasksComplete} / ${g.tasksKnown} tasks · ${g.phasesComplete} of ${g.phasesKnown} phases done`,
-      'All tasks written so far. Later phases are broken into tasks when they start, so this total grows.', true));
+    bar(g.phasesComplete, g.phasesKnown, 'Overall',
+      `${g.phasesComplete} / ${g.phasesKnown} phases`, 'Phases complete across the whole roadmap', true));
 }
 
 // One series of weekly commit counts: single hue, bars rounded at the top, a native
@@ -146,6 +143,20 @@ function projectCard(p) {
     h('a', { class: 'more', href }, `Explore ${p.name} →`));
 }
 
+// Optional "links": [{ label, url }]. With one link the title points to it; any links also
+// get their own row so projects that cover several repositories can list each one.
+function otherProjectCard(p) {
+  const links = (p.links ?? []).filter((l) => safeUrl(l.url));
+  const ext = (url) => (url.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {});
+  const title = links.length === 1 ? h('a', { href: links[0].url, ...ext(links[0].url) }, p.name) : p.name;
+  return h('article', { class: 'card' },
+    h('h3', {}, title),
+    h('p', {}, p.summary),
+    h('ul', { class: 'tags' }, (p.stack ?? []).map((s) => h('li', {}, s))),
+    links.length > 0 && h('p', { class: 'card-links' }, links.map((l, i) => [
+      i ? ' · ' : '', h('a', { class: 'more', href: l.url, ...ext(l.url) }, `${l.label} ↗`)])));
+}
+
 function renderHome(profile, site) {
   document.querySelector('[data-slot="links"]').replaceChildren(...profile.links.map(linkItem));
   document.querySelector('[data-slot="contact"]').replaceChildren(
@@ -164,11 +175,7 @@ function renderHome(profile, site) {
         h('h3', {}, ed.degree, h('span', { class: 'org' }, ` · ${ed.school}`)),
         h('span', { class: 'muted small' }, ed.dates)),
       ed.details && h('p', { class: 'muted' }, ed.details))));
-  document.querySelector('[data-slot="other-projects"]').replaceChildren(...(profile.otherProjects ?? []).map((p) =>
-    h('article', { class: 'card' },
-      h('h3', {}, p.name),
-      h('p', {}, p.summary),
-      h('ul', { class: 'tags' }, (p.stack ?? []).map((s) => h('li', {}, s))))));
+  document.querySelector('[data-slot="other-projects"]').replaceChildren(...(profile.otherProjects ?? []).map(otherProjectCard));
   document.querySelector('[data-slot="skills"]').replaceChildren(...(profile.skills ?? []).map((g) =>
     h('div', {}, h('h3', {}, g.group), h('ul', { class: 'tags' }, g.items.map((i) => h('li', {}, i))))));
 
@@ -310,7 +317,7 @@ async function renderProject(profile, site) {
 async function loadJson(path) {
   try {
     // Default HTTP caching: GitHub Pages revalidates after a few minutes, and the data only
-    // changes every 30, so moving between pages doesn't wait on the network.
+    // changes a few times a day at most, so moving between pages doesn't wait on the network.
     const res = await fetch(path);
     return res.ok ? await res.json() : null;
   } catch {
@@ -339,7 +346,11 @@ function restoreScroll() {
   if (y) scrollTo({ top: y, behavior: 'instant' });
 }
 
-const [profile, site] = await Promise.all([loadJson('data/profile.json'), loadJson('data/generated/site.json')]);
+// Deploys stamp a build id into the page's asset URLs (see deploy.yml); reuse it for the data
+// so a refresh never pairs a new page with a cached old script or JSON file.
+const build = new URL(import.meta.url).search;
+const [profile, site] = await Promise.all([
+  loadJson(`data/profile.json${build}`), loadJson(`data/generated/site.json${build}`)]);
 try {
   bindProfile(profile ?? {});
   if (document.body.dataset.page === 'home') renderHome(profile ?? { links: [] }, site);

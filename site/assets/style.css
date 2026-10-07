@@ -130,6 +130,7 @@ main > section:last-child { border-bottom: 0; }
 .card h3 a:hover { color: var(--accent); }
 .card p { margin: 0; }
 .card .more { margin-top: auto; font-weight: 600; }
+.card .card-links { margin-top: auto; }
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
 .tags li { background: var(--surface-2); color: var(--text-2); border-radius: 6px; padding: 2px 8px; font-size: 0.8rem; }

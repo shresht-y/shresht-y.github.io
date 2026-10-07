@@ -12,7 +12,7 @@ private project repos ──(read-only token)──► GitHub Action in this rep
                                                2. upload site/ → GitHub Pages
 ```
 
-The Action runs every 30 minutes, on manual dispatch, on pushes here and (optionally)
+The Action runs once a day (09:00 UTC), on manual dispatch, on pushes here and (optionally)
 instantly when a project repository pings it.
 
 **What leaves a private repository** — only this allowlist, enforced in `scripts/collect.mjs`:
